@@ -36,7 +36,7 @@ class Menu:
                 print(self.country.random_event())
                 self.actions = 0
         elif self.menu == 'rebels':
-            print(f"Rebelie: {self.country.rebels}\n'")
+            print(f"Rebelie: {self.country.rebelions}\n'")
             if option == 1:
                 print(self.country.attack_rebels())
             elif option == 2:

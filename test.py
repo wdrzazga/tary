@@ -8,7 +8,7 @@ ussr.stats()
 print('\n\n\n\n\n')
 
 for i in range(100):
-    menu.activate_option(5) #tura
+    menu.activate_option(menu.input())
 
 ussr.stats()
 

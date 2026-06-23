@@ -71,10 +71,7 @@ class CommunistCountry:
 
         economy_growth = (0.01 + 0.01 * self.laws_active[3]) - self.mil / 15
         economy_growth += random.uniform(-0.005, 0.005)
-        self.economy.agriculture += self.economy.agriculture * economy_growth
-        self.economy.industry += self.economy.industry * economy_growth
-        self.economy.services += self.economy.services * economy_growth
-        self.economy.update()
+        self.economy.grow(economy_growth)
 
         self.control = self.calculate_control()
         self.budget += (self.population // 10_000) * max(0, min(1, 1 - (1 - self.control) * 3))
@@ -87,18 +84,18 @@ class CommunistCountry:
         self.budget -= self.population // 100_000
 
     def attack_rebels(self):
+        mil_loss = random.randint(0, 3) / 100
+        self.mil = max(0.0, self.mil - mil_loss)
+        self.population -= int(self.population * (mil_loss * 3))
+        self.budget -= (mil_loss * self.population) // 100
         if self.rebelions > 0:
-            sucess_chance = min(0.6, self.mil * 3)
-            if random.random() < sucess_chance:
+            success_chance = min(0.2, self.mil * 10)
+            if random.random() < success_chance:
                 self.rebelions -= 1
                 return "Atak udany, rebelia stłumiona"
             else:
                 self.happiness -= 0.02
                 return "Atak nieudany"
-            mil_loss = random.randint(0, 10) / 100
-            self.mil = max(0.0, self.mil - mil_loss)
-            self.population -= int(self.population * (mil_loss * 3))
-            self.budget -= (mil_loss * self.population) // 100
         else:
             return "Nie masz rebelii"
         
