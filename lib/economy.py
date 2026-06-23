@@ -1,5 +1,5 @@
 class Economy:
-    def __init__(self, industry, agriculture, services, employment, govdebt):
+    def __init__(self, industry, agriculture, services, employment, govdebt, productivity):
         self.industry = industry
         self.agriculture = agriculture
         self.services = services
