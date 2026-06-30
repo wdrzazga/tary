@@ -1,6 +1,7 @@
 import random
 from games.komunistar.law import Law
 from games.komunistar.economy import CommunistEconomy
+from lib.technology import Technology
 
 class CommunistCountry:
     def __init__(self, seed=None):
@@ -13,6 +14,8 @@ class CommunistCountry:
         self.rebelions = 0
         self.mil = round(random.uniform(0.01, 0.1), 2) #Procent populacji, która jest w milicji i wojsku
         self.population = random.randint(10_000, 100_000_000)
+
+        self.tech = Technology(seed)
 
         gdp = round((self.population * (random.randint(1000, 80_000)) / 1_000_000), 4) #PKB w milionach, ekonomia per capita między 0.001, a 0.08
         agr_pr = random.randint(1, 100)
@@ -40,9 +43,11 @@ class CommunistCountry:
         rebelion_range = (0.0, (((1 - self.happiness) - self.mil)) / 5) if self.laws_active[1] == 0 else (0.0, ((1 - self.happiness / 2) - self.mil * 2) / 5)
         famine_range = (rebelion_range[1] + 0.001, rebelion_range[1] + max(0.001, round((1 - eco_per_capita) / 5)))
         r = round(random.random(), 2)
+
         if rebelion_range[0] <= r <= rebelion_range[1]:
             self.rebelions += 1
             return "Rebelia"
+
         elif famine_range[0] <= r <= famine_range[1]:
             population_loss = random.randint(int(self.population // 1000), int(self.population // 5 + 1))
             economy_loss = population_loss * (eco_per_capita / 2)
@@ -51,6 +56,7 @@ class CommunistCountry:
             self.economy.industry -= economy_loss // 4
             self.economy.services -= economy_loss // 4
             return f"Głód, stracono {population_loss} ludzi i {economy_loss} milionów w gospodarce"
+
         else:
             return False
         
