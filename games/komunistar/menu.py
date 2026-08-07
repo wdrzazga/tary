@@ -18,8 +18,19 @@ class Menu:
         print()
         for i in range(len(Menu.menus[self.menu])):
             print(f"{i+1}. {Menu.menus[self.menu][i]}")
-        return int(input("Wybierz opcję: "))
-    
+        return self.read_option("Wybierz opcję: ", len(Menu.menus[self.menu]))
+
+    def read_option(self, prompt, max_option):
+        while True:
+            try:
+                choice = int(input(prompt))
+            except ValueError:
+                print("Niepoprawna opcja, wpisz liczbę.")
+                continue
+            if 1 <= choice <= max_option:
+                return choice
+            print(f"Niepoprawna opcja, wybierz od 1 do {max_option}.")
+
     def activate_option(self, option):
         if self.menu == "main":
             print(f"Akcje wykonane w turze: {str(self.actions)}/2")
@@ -51,13 +62,13 @@ class Menu:
                 law = list(self.country.laws.values())[option-1]
                 for i in range(len(law.options)):
                     print(f"{str(i+1)}. {law.options[i]} {law.descriptions[i]}'")
-                new_law_option = int(input("Wybierz opcję do zmieny prawa: "))
+                new_law_option = self.read_option("Wybierz opcję do zmieny prawa: ", len(law.options))
                 self.country.laws_active[option-1] = new_law_option - 1
         elif self.menu == 'spend':
             if option == 1:
                 amount = int(input("\nPodaj ilość pieniędzy do zainwestowania: "))
-                self.budget -= amount
-                self.country.economy += round(random.uniform(-0.05, 0.3), 2) * 3 * amount
+                self.country.budget -= amount
+                self.country.economy.gdp += round(random.uniform(-0.05, 0.3), 2) * 3 * amount
             elif option == 2:
                 cost = self.country.population * 0.01 // 100
                 if self.country.budget >= cost:
