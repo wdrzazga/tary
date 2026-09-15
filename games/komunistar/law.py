@@ -1,6 +1,5 @@
 class Law:
-    def __init__(self, options, descriptions, happiness_effects):
+    def __init__(self, options, descriptions, effects):
         self.options = options
         self.descriptions = descriptions
-        self.happiness_effects = happiness_effects
-
+        self.effects = effects #Wpływ na szczęście

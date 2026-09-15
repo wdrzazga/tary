@@ -15,8 +15,8 @@ class CommunistCountry:
         self.population = random.randint(10_000, 100_000_000)
 
         gdp = round((self.population * (random.randint(1000, 80_000)) / 1_000_000), 4) #PKB w milionach, ekonomia per capita między 0.001, a 0.08
-        agr_pr = random.randint(1, 98)
-        ind_pr = random.randint(1, 99 - agr_pr)
+        agr_pr = random.randint(1, 100)
+        ind_pr = random.randint(1, 100 - agr_pr)
         ser_pr = random.randint(1, 100 - agr_pr - ind_pr)
         agr = gdp * agr_pr // 100
         ind = gdp * ind_pr // 100
@@ -26,8 +26,8 @@ class CommunistCountry:
         self.laws = { #Brak opisów, kiedy nazwa mówi o wszystkim
             "birth_law": Law(["Podatek bezdzietności", "brak", "Prawo dwóch dzieci", "Prawo jednego dziecka"], ['Dodatkowy podatek za nie posiadanie dzieci', '', 'Kary za posiadanie więcej niż 2 dzieci', 'Kary za posiadanie więcej niż 1 dziecko'], [-0.05, 0.1, -0.1, -0.15]),
             "freedom_of_speech": Law(["tak", "nie"], ['', ''], [0.1, -0.1]),
-            "federalisation_level": Law(['1', '2', '3', '4', '5'], ["Całkowita centralizacja", 'Państwo unitarne', '', 'Federacja', "Konfederacja"], [-0.15, -0.07, 0, 0.07, 0.15]), #Federalizacja zwiększa szczęście, ale zmniejsza kontrolę
-            "private_companies": Law(["jedynie małe przedsiębiorstwa", "nie"], ['', ''], [0, 0])
+            "federalisation_level": Law(['1', '2', '3', '4', '5'], ["Całkowita centralizacja", '', '', '', "Konfederacja"], [-0.15, -0.07, 0, 0.07, 0.15]), #Federalizacja zwiększa szczęście, ale zmniejsza kontrolę
+            "private_companies": Law(["tak", "nie"], ['', ''], [0, 0])
         }
         self.laws_active = [0, 1, 1, 0] #Indeksy aktywnych praw. Domyślnie ustawione, ale gracz może zmienić
         self.happiness = 0.8 + round(random.uniform(-0.1, 0.1), 2)
@@ -38,7 +38,7 @@ class CommunistCountry:
     def random_event(self):
         eco_per_capita = self.economy.gdp / self.population
         rebelion_range = (0.0, (((1 - self.happiness) - self.mil)) / 5) if self.laws_active[1] == 0 else (0.0, ((1 - self.happiness / 2) - self.mil * 2) / 5)
-        famine_range = (rebelion_range[1] + 0.001, rebelion_range[1] + max(0.001, round((1 - eco_per_capita) / 5)))
+        famine_range = (rebelion_range[1] + 0.001, rebelion_range[1] + max(0.001, round((1 - eco_per_capita) / 5, 2)))
         r = round(random.random(), 2)
         if rebelion_range[0] <= r <= rebelion_range[1]:
             self.rebelions += 1
@@ -77,9 +77,9 @@ class CommunistCountry:
         self.economy.update()
 
         self.control = self.calculate_control()
-        self.budget += (self.population // 10_000) * max(0, min(1, 1 - (1 - self.control) * 3))
+        self.budget += (self.population // 10_000) * max(0, min(1, 1 - (1 - self.control) * 3)) 
         self.budget += self.economy.gdp // (250 - 50 * self.laws_active[3]) #Prywatne firmy zmniejszają wpływ gospodarki na budżet, ale zwiększają wzrost gospodarczy
-        self.budget -= self.mil * self.population // 300
+        self.budget -= self.mil * self.population // 200
 
     def change_law(self, law_index, option_index):
         self.happiness += self.laws[law_index].effects[self.laws_active[law_index]] + self.laws[law_index].effects[option_index]
@@ -88,7 +88,7 @@ class CommunistCountry:
 
     def attack_rebels(self):
         if self.rebelions > 0:
-            sucess_chance = min(0.6, self.mil * 5)
+            sucess_chance = min(0.6, self.mil * 3)
             if random.random() < sucess_chance:
                 self.rebelions -= 1
                 return "Atak udany, rebelia stłumiona"

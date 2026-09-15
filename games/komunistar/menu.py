@@ -4,9 +4,9 @@ import random
 class Menu:
     menus = {
         "main": ['Zarządzaj prawem', 'Zobacz statystyki', 'Zarządzaj rebeliami', 'Używanie pieniędzy', 'Zakończ turę'],
-        "rebels": ['Zaatakuj rebeliantów', 'Zgódź się na warunki rebeliantów', 'Wróć'],
+        "rebels": ['Zaatakuj rebeliantów', 'Zgódź się na warunki rebeliantów', 'Demobilizacja', 'Wróć'],
         "laws": ['Prawo dzietności', 'Wolność słowa', 'Poziom federalizacji', 'Prywatne firmy', 'Wróć'],
-        "spend": ['Zainwestuj w gospodarkę', 'Rekrutuj milicję i wojsko', 'Wróć']
+        "money": ['Zainwestuj w gospodarkę', 'Rekrutuj milicję i wojsko', 'Wróć']
     }
 
     def __init__(self, country: CommunistCountry):
@@ -30,7 +30,7 @@ class Menu:
             elif option == 3:
                 self.menu = 'rebels'
             elif option == 4:
-                self.menu = 'spend'
+                self.menu = 'money'
             elif option == 5:
                 self.country.update_stats()
                 print(self.country.random_event())
@@ -42,9 +42,11 @@ class Menu:
             elif option == 2:
                 print(self.country.agree_with_rebels())
             elif option == 3:
+                self.country.mil -= 0.01
+            elif option == 4:
                 self.menu = 'main'
         elif self.menu == 'laws':
-            print("Obecne prawa:", ', '.join([str(x) for x in self.country.laws_active]))
+            print("Obecne prawa:", ', '.join([str(x+1) for x in self.country.laws_active]))
             if option == len(Menu.menus['laws']):
                 self.menu = 'main'
             else:
@@ -53,10 +55,10 @@ class Menu:
                     print(f"{str(i+1)}. {law.options[i]} {law.descriptions[i]}'")
                 new_law_option = int(input("Wybierz opcję do zmieny prawa: "))
                 self.country.laws_active[option-1] = new_law_option - 1
-        elif self.menu == 'spend':
+        elif self.menu == 'money':
             if option == 1:
                 amount = int(input("\nPodaj ilość pieniędzy do zainwestowania: "))
-                self.budget -= amount
+                self.country.budget -= amount
                 self.country.economy += round(random.uniform(-0.05, 0.3), 2) * 3 * amount
             elif option == 2:
                 cost = self.country.population * 0.01 // 100
